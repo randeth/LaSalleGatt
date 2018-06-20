@@ -204,12 +204,8 @@ public class DeviceScanActivity extends ListActivity {
             final ScanFilter filterSuiff = new ScanFilter.Builder()
                     .setDeviceName("Suiff")
                     .build();
-            final ScanFilter filterIforce = new ScanFilter.Builder()
-                    .setDeviceName("iForce")
-                    .build();
             ArrayList<ScanFilter> filterList = new ArrayList<>();
             filterList.add(filterSuiff);
-            filterList.add(filterIforce);
             mBluetoothLeScanner.startScan(filterList, settings, mLeScanCallback);
         } else {
             mScanning = false;
