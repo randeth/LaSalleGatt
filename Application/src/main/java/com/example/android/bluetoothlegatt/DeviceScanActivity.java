@@ -16,7 +16,6 @@
 
 package com.example.android.bluetoothlegatt;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -24,17 +23,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -61,8 +54,6 @@ public class DeviceScanActivity extends ListActivity {
     private Handler mHandler;
 
     private static final int REQUEST_ENABLE_BT = 1;
-    private static final int MY_PERMISSION_RESPONSE = 2;
-
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
 
@@ -71,16 +62,6 @@ public class DeviceScanActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         getActionBar().setTitle(R.string.title_devices);
         mHandler = new Handler();
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.w("BleActivity", "Location access not granted!");
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MY_PERMISSION_RESPONSE);
-            }
-        }
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
@@ -198,19 +179,7 @@ public class DeviceScanActivity extends ListActivity {
 
             mScanning = true;
             //Settings and filters can be applied through ScanSettings and ScanFilter
-            final ScanSettings settings = new ScanSettings.Builder()
-                    .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
-                    .build();
-            final ScanFilter filterSuiff = new ScanFilter.Builder()
-                    .setDeviceName("Suiff")
-                    .build();
-            final ScanFilter filterIforce = new ScanFilter.Builder()
-                    .setDeviceName("iForce")
-                    .build();
-            ArrayList<ScanFilter> filterList = new ArrayList<>();
-            filterList.add(filterSuiff);
-            filterList.add(filterIforce);
-            mBluetoothLeScanner.startScan(filterList, settings, mLeScanCallback);
+            mBluetoothLeScanner.startScan(mLeScanCallback);
         } else {
             mScanning = false;
             mBluetoothLeScanner.stopScan(mLeScanCallback);
